@@ -1,0 +1,5 @@
+.env
+*.m4a
+*.txt
+transcribe-cli
+.DS_Store
