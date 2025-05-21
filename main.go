@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/joho/godotenv"
 	openai "github.com/sashabaranov/go-openai"
@@ -73,8 +74,22 @@ func checkFileSize(file *os.File) {
 }
 
 func CheckFileType(path string) {
+	allowedExtensions := []string{"mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"}
 	ext := filepath.Ext(path)
-	if ext != ".m4a" {
-		log.Fatalf("invalid file type: %s. Only .m4a files are allowed", ext)
+
+	if len(ext) > 0 && ext[0] == '.' {
+		ext = ext[1:] // Remove the leading dot
 	}
+	ext = strings.ToLower(ext)
+
+	for _, allowedExt := range allowedExtensions {
+		if ext == allowedExt {
+			return // Valid file type
+		}
+	}
+
+	// If the loop finishes, the extension is not allowed
+	allowedTypesStr := strings.Join(allowedExtensions, ", ")
+	originalExtWithDot := filepath.Ext(path) // Get original extension with dot for the error message
+	log.Fatalf("Invalid file type: %s. Allowed types are: %s", originalExtWithDot, allowedTypesStr)
 }
