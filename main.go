@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 	openai "github.com/sashabaranov/go-openai"
@@ -27,6 +28,8 @@ func main() {
 	if path == "" {
 		log.Fatal("input file is required")
 	}
+
+	CheckFileType(path)
 
 	if compress {
 		path = compressFile(path)
@@ -66,5 +69,12 @@ func checkFileSize(file *os.File) {
 	}
 	if fileInfo.Size() > 25*1024*1024 {
 		log.Fatalf("file size exceeds the limit of 25MB")
+	}
+}
+
+func CheckFileType(path string) {
+	ext := filepath.Ext(path)
+	if ext != ".m4a" {
+		log.Fatalf("invalid file type: %s. Only .m4a files are allowed", ext)
 	}
 }
